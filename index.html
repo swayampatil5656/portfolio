@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Swayam Patil Portfolio</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+<!-- Font Awesome for Skill Icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<style>
+body {
+  margin: 0;
+  font-family: 'Roboto', sans-serif;
+  background: #1e1e2f;
+  color: #e0e0e0;
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+  position: relative;
+}
+canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
+header { display: flex; justify-content: space-between; align-items: center; padding: 20px 50px; background-color: rgba(30,30,30,0.9); position: sticky; top: 0; z-index: 1000; }
+header h1 { font-size: 28px; color: #fff; }
+header nav a { color: #e0e0e0; margin-left: 20px; text-decoration: none; font-weight: 500; transition: color 0.3s; }
+header nav a:hover { color: #7f5af0; }
+section { padding: 80px 50px; opacity: 0; transform: translateY(20px); transition: all 0.8s ease; }
+section.visible { opacity: 1; transform: translateY(0); }
+#hero { display: flex; flex-direction: column; align-items: center; text-align: center; min-height: 80vh; justify-content: center; }
+#hero h2 { font-size: 36px; margin-bottom: 20px; }
+#hero p { font-size: 18px; max-width: 600px; margin-bottom: 30px; }
+#hero .btn { padding: 12px 25px; background: linear-gradient(135deg,#7f5af0,#5ad6f0); color: #fff; border: none; border-radius: 25px; cursor: pointer; transition: all 0.3s; box-shadow: 0 0 10px #7f5af0; }
+#hero .btn:hover { transform: scale(1.1); box-shadow: 0 0 20px #5ad6f0; }
+.projects, .skills, .contact, #about, #resume-section { max-width: 1000px; margin: 0 auto; }
+.project-card, .skill-item, .skill-circle { background-color: rgba(40,40,60,0.7); padding: 20px; border-radius: 15px; margin-bottom: 20px; transition: transform 0.5s, box-shadow 0.5s; display: inline-flex; align-items: center; justify-content: center; }
+.project-card:hover, .skill-item:hover, .skill-circle:hover { transform: translateY(-10px) scale(1.05); box-shadow: 0 0 20px #7f5af0; }
+.contact form { display: flex; flex-direction: column; max-width: 600px; margin: 0 auto; }
+.contact form input, .contact form textarea { padding: 12px; margin-bottom: 15px; border-radius: 8px; border: none; background: #2c2c3c; color: #e0e0e0; transition: all 0.3s; }
+.contact form input:focus, .contact form textarea:focus { outline: none; box-shadow: 0 0 8px #7f5af0; }
+.contact form button { padding: 12px; background: linear-gradient(135deg,#7f5af0,#5ad6f0); color: #fff; border: none; border-radius: 25px; cursor: pointer; transition: all 0.3s; box-shadow: 0 0 10px #7f5af0; }
+.contact form button:hover { transform: scale(1.05); box-shadow: 0 0 20px #5ad6f0; }
+footer { text-align: center; padding: 20px; background-color: rgba(30,30,30,0.9); color: #aaa; }
+
+/* Dynamic About Me Text */
+.dynamic-text {
+  font-size: 18px;
+  line-height: 1.8;
+  font-weight: 500;
+  background: linear-gradient(270deg, #7f5af0, #5ad6f0, #ff6f91, #7f5af0);
+  background-size: 800% 800%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gradientAnimation 10s ease infinite;
+  transition: transform 0.3s;
+}
+.dynamic-text:hover { transform: scale(1.03); }
+@keyframes gradientAnimation {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Skills */
+.skill-circle { width: 100px; height: 100px; border-radius: 50%; margin: 10px; position: relative; color: #fff; font-size: 24px; cursor: pointer; transition: transform 0.3s, box-shadow 0.3s; display: inline-flex; align-items: center; justify-content: center; }
+.skill-circle i { font-size: 36px; }
+/* Tooltip */
+.skill-circle::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: -35px;
+  background: rgba(127, 90, 240, 0.9);
+  color: #fff;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 14px;
+  opacity: 0;
+  white-space: nowrap;
+  pointer-events: none;
+  transform: translateY(10px);
+  transition: all 0.3s ease;
+}
+.skill-circle:hover::after {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Dynamic Resume Button */
+.dynamic-btn {
+  padding: 12px 25px;
+  font-size: 16px;
+  color: #fff;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  background: linear-gradient(270deg, #7f5af0, #5ad6f0, #ff6f91, #7f5af0);
+  background-size: 600% 600%;
+  box-shadow: 0 0 10px #7f5af0;
+  transition: transform 0.3s, box-shadow 0.3s;
+  animation: gradientMove 8s ease infinite, pulse 2s infinite;
+}
+.dynamic-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 25px #5ad6f0;
+}
+@keyframes gradientMove {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+@keyframes pulse {
+  0% { box-shadow: 0 0 10px #7f5af0; }
+  50% { box-shadow: 0 0 20px #ff6f91; }
+  100% { box-shadow: 0 0 10px #7f5af0; }
+}
+.project-card, .skill-circle {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.6s ease;
+}
+
+.project-card.visible, .skill-circle.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Scroll animation for About and Resume sections */
+#about, #resume-section { opacity: 0; transform: translateY(20px); transition: all 0.8s ease; }
+#about.visible, #resume-section.visible { opacity: 1; transform: translateY(0); }
+
+section h2 {
+  text-align: center;
+  font-size: 32px;
+  font-weight: 700;
+  background: linear-gradient(270deg, #7f5af0, #5ad6f0, #ff6f91, #7f5af0);
+  background-size: 800% 800%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: headingGradient 8s ease infinite;
+  margin-bottom: 40px;
+}
+
+@keyframes headingGradient {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+section {
+  padding: 60px 40px;
+  margin: 50px 20px;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.8s ease;
+  background: transparent !important; /* No background */
+  border: none !important;          /* No borders */
+  box-shadow: none !important;      /* Remove any possible shadow */
+}
+
+/* Remove previous pseudo-elements if still applied */
+section::before,
+section::after {
+  content: none !important;
+}
+
+
+/* Animation keyframes */
+@keyframes borderGradient {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+.skill-circle {
+  margin: 15px; /* Adds spacing around each */
+}
+/* Contact Title Styling */
+.contact-title {
+  text-align: center;
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-bottom: 40px;
+}
+
+/* Container for Left & Right Sections */
+.contact-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 40px;
+  justify-content: center;
+  align-items: flex-start;
+  max-width: 1200px;
+  margin: auto;
+}
+
+/* Left Section */
+.contact-info {
+  flex: 1;
+  min-width: 300px;
+  font-size: 1.1rem;
+}
+
+.contact-info p {
+  margin: 10px 0;
+}
+
+/* Social Icons Styling */
+.social-icons-contact {
+  margin-top: 15px;
+}
+
+.social-icons-contact a {
+  margin-right: 15px;
+  font-size: 1.5rem;
+  text-decoration: none;
+}
+
+/* Right Section (Form) */
+.contact-form {
+  flex: 1;
+  min-width: 300px;
+}
+/* --- A. Animate Heading --- */
+.contact h2 {
+  text-align: center;
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-bottom: 30px;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeSlideUp 1s forwards ease-in-out;
+}
+
+@keyframes fadeSlideUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* --- B. Social Icon hover animation (glow + scale) --- */
+.social-icons-contact a {
+  font-size: 24px;
+  margin-right: 15px;
+  text-decoration: none;
+  color: white;
+  transition: all 0.3s ease;
+}
+
+.social-icons-contact a:hover {
+  transform: scale(1.2);
+  text-shadow: 0px 0px 10px #8b5cf6, 0px 0px 20px #8b5cf6;
+}
+
+/* --- E. Gradient Animated Button --- */
+.contact button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 15px;
+  border: none;
+  border-radius: 25px;
+  font-size: 16px;
+  cursor: pointer;
+  background: linear-gradient(90deg, #6a11cb, #2575fc);
+  color: white;
+  transition: all 0.4s ease;
+  background-size: 200%;
+}
+
+.contact button:hover {
+  background-position: right;
+  transform: scale(1.05);
+}
+/* Projects Section */
+#projects {
+  padding: 60px 40px;
+  margin-top: 40px;
+}
+
+#projects h2 {
+  text-align: center;
+  font-size: 32px;
+  margin-bottom: 30px;
+  color: #d9bbff; /* Light purple glow theme */
+}
+
+/* Projects Grid */
+.projects-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Project Cards */
+.proj-card {
+  display: flex;
+  gap: 24px;
+  background: rgba(255, 255, 255, 0.05); /* Slight transparent card */
+  border-radius: 16px;
+  padding: 18px;
+  align-items: center;
+  box-shadow: 0 8px 25px rgba(127, 90, 240, 0.2);
+  border: 1px solid rgba(127, 90, 240, 0.3);
+}
+
+/* Card Left Image */
+.proj-left img {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+/* Title & Text */
+.proj-title {
+  font-size: 22px;
+  font-weight: bold;
+  color: #ff9cf3;
+  margin-bottom: 8px;
+}
+
+.proj-desc {
+  color: #ccc;
+  margin-bottom: 18px;
+  line-height: 1.5;
+}
+
+/* Technology Icons */
+.proj-tech {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.proj-tech i {
+  font-size: 22px;
+  color: #e0e0e0;
+}
+
+/* Buttons */
+.proj-buttons {
+  display: flex;
+  gap: 12px;
+}
+
+.btn-outline {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: 10px;
+  text-decoration: none;
+  color: #d6ccff;
+  border: 1px solid rgba(127, 90, 240, 0.4);
+  background: linear-gradient(90deg, rgba(127, 90, 240, 0.1), rgba(255, 156, 243, 0.1));
+  transition: all 0.3s ease;
+}
+
+.btn-outline:hover {
+  transform: scale(1.05);
+  color: #ffffff;
+  border-color: rgba(255, 156, 243, 0.6);
+  box-shadow: 0 8px 20px rgba(255, 156, 243, 0.3);
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .proj-card {
+    flex-direction: column;
+  }
+  .proj-left img {
+    height: 200px;
+  }
+}
+
+/* 🔹 Scroll Fade + Slide Animations */
+.fade-in {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+.fade-in.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Alternate slide directions */
+.fade-in.left {
+  transform: translateX(-60px);
+}
+.fade-in.right {
+  transform: translateX(60px);
+}
+.fade-in.left.visible,
+.fade-in.right.visible {
+  transform: translateX(0);
+}
+
+/* 🔹 Glowing border hover effect */
+.project-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 2px solid transparent;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.05);
+  transition: all 0.3s ease-in-out;
+  position: relative;
+}
+.project-card:hover {
+  border: 2px solid #00ffff;
+  box-shadow: 0 0 25px #00ffff;
+  transform: translateY(-5px) scale(1.02);
+}
+
+/* 🔹 Project image + info styling */
+.project-img {
+  width: 100%;
+  height: 240px;
+  object-fit: cover;
+  border-bottom: 2px solid #00ffff20;
+}
+.project-info {
+  padding: 20px;
+  text-align: left;
+}
+.tech-stack span {
+  background: #0ff2;
+  border-radius: 8px;
+  padding: 4px 8px;
+  margin: 4px;
+  display: inline-block;
+  font-size: 13px;
+}
+.btn.live {
+  background: linear-gradient(90deg, #00ffff, #0077ff);
+}
+.btn.code {
+  background: linear-gradient(90deg, #444, #222);
+}
+.project-links a {
+  color: #fff;
+  text-decoration: none;
+}
+/* 🔹 Section title animation */
+.section-title {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.8s ease-out;
+  text-align: center;
+  letter-spacing: 1px;
+  font-size: 32px;
+  color: #00ffff;
+  margin-bottom: 40px;
+  position: relative;
+}
+
+/* Optional glowing underline */
+.section-title::after {
+  content: "";
+  display: block;
+  width: 80px;
+  height: 3px;
+  background: linear-gradient(90deg, #00ffff, #0077ff);
+  margin: 10px auto 0;
+  border-radius: 2px;
+}
+
+.section-title.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+body {
+  font-family: 'Poppins', sans-serif;
+  color: #fff;
+}
+
+/* Projects Section */
+.projects-section {
+  padding: 80px 40px;
+  background: rgba(0, 0, 0, 0.7);
+  text-align: center;
+}
+
+.section-title {
+  font-size: 2.5rem;
+  color: #00eaff;
+  margin-bottom: 50px;
+  text-shadow: 0 0 10px #00eaff;
+}
+
+.projects-container {
+  display: flex;
+  flex-direction: column;
+  gap: 50px;
+  align-items: center;
+}
+
+/* Project Card */
+.project-card {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 30px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 20px;
+  padding: 25px;
+  max-width: 900px;
+  box-shadow: 0 0 25px rgba(0, 255, 255, 0.2);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.project-card:hover {
+  transform: scale(1.03);
+  box-shadow: 0 0 35px rgba(0, 255, 255, 0.5);
+}
+
+/* Image */
+.project-img {
+  width: 500px;
+  border-radius: 10px;
+}
+
+/* Info */
+.project-info {
+  text-align: left;
+}
+
+.project-info h3 {
+  color: #00eaff;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.project-info p {
+  color: #ddd;
+  line-height: 1.6;
+  font-size: 0.95rem;
+  margin-bottom: 15px;
+}
+
+/* Buttons */
+.buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.btn {
+  padding: 10px 20px;
+  border-radius: 25px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: 0.3s;
+}
+
+.btn.demo {
+  background: linear-gradient(90deg, #00eaff, #007bff);
+  color: #fff;
+}
+
+.btn.code {
+  border: 2px solid #00eaff;
+  color: #00eaff;
+}
+
+.btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 10px #00eaff;
+}
+
+
+
+
+
+
+
+
+</style>
+</head>
+<body>
+<canvas id="bg-canvas"></canvas>
+
+<header>
+  <h1>Swayam Patil</h1>
+  <nav>
+    <a href="#hero">Home</a>
+    <a href="#about">About Me</a>
+    <a href="#projects">Projects</a>
+    <a href="#skills">Skills</a>
+    <a href="#contact">Contact</a>
+  </nav>
+</header>
+
+<section id="hero">
+  <h2 id="typed-text"></h2>
+  <p>I’m an MCA graduate passionate about frontend development and building user-focused web applications.</p>
+  <button class="btn" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'});">Contact Me</button>
+  <div style="margin-top: 20px;">
+    <a href="swayam-Resume.pdf" download>
+      <button class="dynamic-btn"><i class="fas fa-file-pdf"></i> Download Resume</button>
+    </a>
+  </div>
+</section>
+
+<section id="about">
+  <h2 class="section-title">About Me</h2>
+  <p class="dynamic-text">
+    I am a passionate frontend developer dedicated to crafting seamless and engaging user experiences. 
+    I have the ability to transform lines of code into visually stunning interfaces. I am particularly enthusiastic about exploring the intersections of design and functionality, striving to strike a perfect balance between aesthetics and usability. 
+    I bring a passion for creating captivating user interfaces using the latest web technologies. Proficient in HTML5, CSS3, and JavaScript, I specialize in transforming design concepts into seamless and interactive web experiences. 
+    My toolkit includes popular frontend libraries and frameworks, with a strong emphasis on React.js for building dynamic and responsive applications.
+  </p>
+</section>
+
+<section id="projects" class="projects-section">
+  <h2 class="section-title"> Projects</h2>
+
+  <div class="projects-container">
+
+    <!-- Flipkart Clone -->
+    <div class="project-card">
+      <img src="flipkart.png" alt="Flipkart Clone" class="project-img">
+      <div class="project-info">
+        <h3>Flipkart Clone</h3>
+        <p>
+          A fully responsive e-commerce website built using HTML, CSS, and JavaScript.
+          Features a clean UI and Add-to-Cart functionality.
+        </p>
+        <div class="buttons">
+          <a href="f.index.html" target="_blank" class="btn demo">View Demo</a>
+          <a href="https://github.com/your-username/flipkart-clone" target="_blank" class="btn code">Source Code</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Weather App -->
+    <div class="project-card">
+      <img src="weather.jpg" alt="Weather App" class="project-img">
+      <div class="project-info">
+        <h3>Weather App (React)</h3>
+        <p>
+          A React-based weather forecasting web app using the OpenWeather API. Displays live weather updates.
+        </p>
+        <div class="buttons">
+          <a href="w.index.html" target="_blank" class="btn demo">View Demo</a>
+          <a href="https://github.com/your-username/weather-app" target="_blank" class="btn code">Source Code</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Portfolio Website -->
+    <div class="project-card">
+      <img src="portfolio.png" alt="Portfolio Website" class="project-img">
+      <div class="project-info">
+        <h3>Portfolio Website</h3>
+        <p>
+          A sleek, animated personal website built using HTML, CSS, and JavaScript. Features smooth scrolling and dynamic sections.
+        </p>
+        <div class="buttons">
+          <a href="p.index.html" target="_blank" class="btn demo">View Demo</a>
+          <a href="https://github.com/your-username/portfolio-website" target="_blank" class="btn code">Source Code</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<section id="skills" class="skills"> <h2 class="section-title">Skills</h2> <div class="skill-circle" data-tooltip="HTML5"><i class="fab fa-html5" style="color:#e34f26;"></i></div> <div class="skill-circle" data-tooltip="CSS3"><i class="fab fa-css3-alt" style="color:#1572b6;"></i></div> <div class="skill-circle" data-tooltip="JavaScript"><i class="fab fa-js" style="color:#f7df1e;"></i></div> <div class="skill-circle" data-tooltip="React.js"><i class="fab fa-react" style="color:#61dafb;"></i></div> <div class="skill-circle" data-tooltip="Next.js"><i class="fas fa-angle-double-right" style="color:#000;"></i></div> <div class="skill-circle" data-tooltip="Redux"><i class="fas fa-sync-alt" style="color:#764abc;"></i></div> <div class="skill-circle" data-tooltip="SQL"><i class="fas fa-database" style="color:#f29111;"></i></div> <div class="skill-circle" data-tooltip="MongoDB"><i class="fas fa-leaf" style="color:#4db33d;"></i></div> <div class="skill-circle" data-tooltip="Node.js"><i class="fab fa-node-js" style="color:#68a063;"></i></div> <div class="skill-circle" data-tooltip="Bootstrap"><i class="fab fa-bootstrap" style="color:#7952b3;"></i></div> <div class="skill-circle" data-tooltip="GitHub"><i class="fab fa-github" style="color:#fff;"></i></div> </section>
+
+<section id="contact" class="contact"> 
+  <h2 class="section-title">Contact Me</h2> 
+  <div class="contact-container"> 
+    <!-- Left: Contact Info --> 
+     <div class="contact-info"> 
+      <p><i class="fas fa-map-marker-alt"></i> Pune, Maharashtra, India</p> 
+      <p><i class="fas fa-phone"></i> +91 93093 93073</p>
+       <p><i class="fas fa-envelope"></i> patilswayam5656@gmail.com</p>
+        <div class="social-icons-contact"> 
+          <a href="https://linkedin.com/in/swayam patil" target="_blank"><i class="fab fa-linkedin"></i></a> 
+          <a href="https://github.com/yourusername" target="_blank"><i class="fab fa-github"></i></a> 
+          <a href="https://instagram.com/swayam_patil_gurjar" target="_blank"><i class="fab fa-instagram"></i></a>
+           <a href="YOUR-PORTFOLIO-LINK" target="_blank"><i class="fas fa-globe"></i></a> 
+          </div> 
+        </div> 
+        <!-- Right: Contact Form -->
+          <div class="contact-form"> 
+            <form onsubmit="submitForm(event)"> <input type="text" name="name" placeholder="Your Name" required> <input type="email" name="email" placeholder="Your Email" required> <textarea name="message" rows="6" placeholder="Your Message" required></textarea> <button type="submit">Send Message</button> </form> </div> </div> </section>
+
+<footer>
+  &copy; 2025 Swayam Patil
+</footer>
+
+<script>
+// Typing effect
+const typedText = document.getElementById('typed-text');
+const phrases = ["Hello, I am Swayam Patil.", "Frontend Developer.", "MCA Graduate.", "Building Interactive UIs."];
+let phraseIndex = 0; 
+let charIndex = 0;
+function type(){
+  if(charIndex < phrases[phraseIndex].length){
+    typedText.innerHTML += phrases[phraseIndex].charAt(charIndex);
+    charIndex++;
+    setTimeout(type, 100);
+  } else { setTimeout(erase, 2000); }
+}
+function erase(){
+  if(charIndex > 0){
+    typedText.innerHTML = phrases[phraseIndex].substring(0,charIndex-1);
+    charIndex--;
+    setTimeout(erase, 50);
+  } else { 
+    phraseIndex = (phraseIndex + 1) % phrases.length; 
+    setTimeout(type, 500); 
+  }
+}
+type();
+
+// Scroll animations
+const sections = document.querySelectorAll('section');
+window.addEventListener('scroll', () => {
+  sections.forEach(sec => {
+    const rect = sec.getBoundingClientRect();
+    if(rect.top < window.innerHeight - 100){ sec.classList.add('visible'); }
+  });
+});
+
+// Contact form
+function submitForm(e){ e.preventDefault(); alert('Thank you! Your message has been sent.'); e.target.reset(); }
+
+// Coding matrix background
+const canvas = document.getElementById('bg-canvas');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$%^&*()';
+const fontSize = 16;
+const columns = Math.floor(canvas.width / fontSize);
+const drops = Array(columns).fill(0);
+function draw(){
+  ctx.fillStyle='rgba(30,30,30,0.05)';
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+  ctx.fillStyle='#7f5af0';
+  ctx.font = fontSize+'px monospace';
+  for(let i=0;i<drops.length;i++){
+    const text = letters.charAt(Math.floor(Math.random()*letters.length));
+    const x = i*fontSize;
+    const y = drops[i]*fontSize;
+    ctx.fillText(text,x,y);
+    drops[i]++;
+    if(drops[i]*fontSize > canvas.height || Math.random()>0.975){ drops[i]=0; }
+  }
+  requestAnimationFrame(draw);
+}
+draw();
+window.addEventListener('resize', ()=>{ canvas.width=window.innerWidth; canvas.height=window.innerHeight; });
+
+// Scroll animations for sections, project cards, and skill icons
+function revealOnScroll() {
+  const revealElements = document.querySelectorAll('.project-card, .skill-circle');
+  revealElements.forEach((el, index) => {
+    const rect = el.getBoundingClientRect();
+    if (rect.top < window.innerHeight - 50) {
+      setTimeout(() => { el.classList.add('visible'); }, index * 150); // stagger effect
+    }
+  });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const heading = document.querySelector('.contact h2');
+  heading.style.animation = 'fadeSlideUp 1s forwards ease-in-out';
+})
+// 🔹 Assign alternating directions to fade-ins
+const fadeEls = document.querySelectorAll('.fade-in');
+fadeEls.forEach((el, i) => {
+  if (i % 2 === 0) el.classList.add('left');
+  else el.classList.add('right');
+});
+
+// 🔹 Scroll Fade-in Effect using IntersectionObserver
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      observer.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.2 });
+
+
+fadeEls.forEach(el => observer.observe(el));
+// 🔹 Animate section titles on scroll
+const titles = document.querySelectorAll('.section-title');
+
+const titleObserver = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      titleObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.3 });
+
+titles.forEach(title => titleObserver.observe(title));
+
+
+
+
+window.addEventListener('scroll', revealOnScroll);
+window.addEventListener('load', revealOnScroll); // reveal on page load if visible
+
+</script>
+</body>
+</html>
